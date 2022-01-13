@@ -1,0 +1,171 @@
+postgres=# \c bajaj;
+You are now connected to database "bajaj" as user "postgres".
+bajaj=# create schema test;
+CREATE SCHEMA		
+bajaj=# set search_path to test;
+SET
+bajaj=# create table EmployeeeDetails (empid int primary key not null, fullname varchar(30), managerid int, city varchar(20));
+CREATE TABLE
+bajaj=# create table EmployeeSalary (empid int, project varchar(10), salary int);
+CREATE TABLE
+bajaj=# insert into employeeedetails (empid, fullname,managerid,city) values (101, 'mukesh', 102, 'delhi'), (102, 'narayan', 123, 'bengaluru'), (103, 'ratan', 165, 'mumbai');
+INSERT 0 3
+bajaj=# insert into employeesalary (empid, project, salary) values (101,'P1',7500), (102, 'P2', 11000), (103,'P1', 13000);
+INSERT 0 3
+bajaj=# select* from employeeedetails;
+ empid | fullname | managerid |   city
+-------+----------+-----------+-----------
+   101 | mukesh   |       102 | delhi
+   102 | narayan  |       123 | bengaluru
+   103 | ratan    |       165 | mumbai
+(3 rows)
+
+
+bajaj=# select * from employeesalary;
+ empid | project | salary
+-------+---------+--------
+   101 | P1      |   7500
+   102 | P2      |  11000
+   103 | P1      |  13000
+(3 rows)
+
+
+bajaj=# insert into employeeedetails (empid, fullname, managerid,city) values (104,'anand',101,'pune');
+INSERT 0 1
+bajaj=# select* from employeeedetails;
+ empid | fullname | managerid |   city
+-------+----------+-----------+-----------
+   101 | mukesh   |       102 | delhi
+   102 | narayan  |       123 | bengaluru
+   103 | ratan    |       165 | mumbai
+   104 | anand    |       101 | pune
+(4 rows)
+
+1) 
+bajaj=# select empid,fullname from employeeedetails where managerid = 101;
+ empid | fullname
+-------+----------
+   104 | anand
+(1 row)
+
+2)
+bajaj=# select count(*) as No_of_Employees_P1 from employeesalary where project = 'P1';
+ no_of_employees_p1
+--------------------
+                  2
+(1 row)
+
+bajaj=# select max(salary) as Max_Salary, min(salary) as Min_Salary, avg(salary) as Avg_Salary from employeesalary;
+ max_salary | min_salary |       avg_salary
+------------+------------+------------------------
+      13000 |       7500 | 10500.0000000000000000
+(1 row)
+
+
+bajaj=# insert into employeesalary (empid, project,salary) values (104,'P2', 18000);
+INSERT 0 1
+bajaj=# select * from employeesalary;
+ empid | project | salary
+-------+---------+--------
+   101 | P1      |   7500
+   102 | P2      |  11000
+   103 | P1      |  13000
+   104 | P2      |  18000
+(4 rows)
+
+3)
+bajaj=# select max(salary) as Max_Salary, min(salary) as Min_Salary, avg(salary) as Avg_Salary from employeesalary;
+ max_salary | min_salary |       avg_salary
+------------+------------+------------------------
+      18000 |       7500 | 12375.0000000000000000
+(1 row)
+
+4)
+bajaj=# select empid from employeesalary where salary between 10000 and 15000;
+ empid
+-------
+   102
+   103
+(2 rows)
+
+
+bajaj=# alter table employeesalary add column variable int;
+ALTER TABLE
+bajaj=# select * from employeesalary;
+ empid | project | salary | variable
+-------+---------+--------+----------
+   101 | P1      |   7500 |
+   102 | P2      |  11000 |
+   103 | P1      |  13000 |
+   104 | P2      |  18000 |
+(4 rows)
+
+
+bajaj=# update employeesalary  set variable = 1000;
+UPDATE 4
+bajaj=# select * from employeesalary;
+ empid | project | salary | variable
+-------+---------+--------+----------
+   101 | P1      |   7500 |     1000
+   102 | P2      |  11000 |     1000
+   103 | P1      |  13000 |     1000
+   104 | P2      |  18000 |     1000
+(4 rows)
+
+5)
+bajaj=# select empid, salary+variable as Total_Salary from employeesalary;
+ empid | total_salary
+-------+--------------
+   101 |         8500
+   102 |        12000
+   103 |        14000
+   104 |        19000
+(4 rows)
+
+6)
+bajaj=# select employeeedetails.empid from employeeedetails,employeesalary where employeeedetails.empid = employeesalary.empid;
+ empid
+-------
+   101
+   102
+   103
+   104
+(4 rows)
+
+7)
+bajaj=# select UPPER(fullname), LOWER(city) from employeeedetails;
+  upper  |   lower
+---------+-----------
+ MUKESH  | delhi
+ NARAYAN | bengaluru
+ RATAN   | mumbai
+ ANAND   | pune
+(4 rows)
+
+8)
+bajaj=# select project, count(empid) as emp_count from employeesalary group by project order by emp_count desc;
+ project | emp_count
+---------+-----------
+ P2      |         2
+ P1      |         2
+(2 rows)
+
+9)
+bajaj=# select * from employeeedetails where mod (empid,2) <> 0;
+ empid | fullname | managerid |  city
+-------+----------+-----------+--------
+   101 | mukesh   |       102 | delhi
+   103 | ratan    |       165 | mumbai
+(2 rows)
+
+
+10)                                                             ^
+bajaj=# select max(salary) from employeesalary where salary != (select max(salary) from employeesalary where salary != (select max(salary) from employeesalary ))
+bajaj-# and salary != (select max(salary) from employeesalary);
+  max
+-------
+ 11000
+(1 row)
+
+
+bajaj=#
