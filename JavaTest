@@ -48,6 +48,7 @@ public class JavaTest
 		{
 			System.out.println("The number is not prime");
 		}*/
+	}	
 	
 	// 3) Leap year
 	/*public static void main(String[] args) 
